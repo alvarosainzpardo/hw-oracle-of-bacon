@@ -12,19 +12,27 @@ class OracleOfBacon
 
   attr_accessor :from, :to
   attr_reader :api_key, :response, :uri
-  
+
   include ActiveModel::Validations
   validates_presence_of :from
   validates_presence_of :to
   validates_presence_of :api_key
   validate :from_does_not_equal_to
 
+  # Required dependency for ActiveModel::Errors
+  extend ActiveModel::Naming
+
   def from_does_not_equal_to
     # YOUR CODE HERE
+    @errors.add(:from, :not_the_same, message:'From cannot be the same as To') if self.from == self.to
   end
 
-  def initialize(api_key='')
+  def initialize(api_key='38b99ce9ec87')
     # your code here
+    @api_key = api_key
+    @from = 'Kevin Bacon'
+    @to = 'Kevin Bacon'
+    @errors = ActiveModel::Errors.new(self)
   end
 
   def find_connections
@@ -45,7 +53,7 @@ class OracleOfBacon
     # your code here: set the @uri attribute to properly-escaped URI
     #   constructed from the @from, @to, @api_key arguments
   end
-      
+
   class Response
     attr_reader :type, :data
     # create a Response object from a string of XML markup.
